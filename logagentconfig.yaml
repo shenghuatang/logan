@@ -6,7 +6,7 @@ extensions:
  - log
 
 directories:
- - /var/log
+ - /newproject/course/python/python3/src/logger
 
 logfiles:
 #  - /home/user/userlog.log

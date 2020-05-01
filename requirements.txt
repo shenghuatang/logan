@@ -1,5 +1,5 @@
-flask
-tailer
-grin
-bandit
-flake8
+flask==1.1.1
+tailer==0.4.1
+grin==1.2.1
+bandit==1.6.2
+#flake8==

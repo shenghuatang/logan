@@ -10,6 +10,7 @@ import uuid
 from flask import Flask, render_template
 from flask import request, session
 from flask import make_response
+import logging
 
 # -*- coding: utf-8 -*-
 """
@@ -28,6 +29,28 @@ app = Flask(__name__)
 configurationfile = 'logagentconfig.yaml'
 config = {}
 
+def init_log():
+    """
+    The main entry point of the application
+    """
+    logger = logging.getLogger("exampleApp")
+    logger.setLevel(logging.INFO)
+
+    # create the logging file handler
+    fh = logging.FileHandler("logan.log")
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+
+    # add handler to logger object
+    logger.addHandler(fh)
+    logger.info("Program started")
+    logger.info("Done!")
+    return logger
+
+
+logger = init_log()
+
 def init():
 	"""Init configuration"""
 	configfile = open(configurationfile, 'r')
@@ -35,7 +58,7 @@ def init():
 	try:
 		config = yaml.load(configfile)
 		for item in config:
-			print item + ": " + str(config[item])
+			logger.info(item + ": " + str(config[item]))
 	finally:		
 		configfile.close()
 	
@@ -125,6 +148,7 @@ def list():
 					# Glob for all files matching the ones specified in the conig
 					paths = glob.glob(dir + "/*." + ext)
 					for path in paths:
+						path=path.replace("\\","/")
 						process_path(validfiles, path)
 
     # Filter log files for files explicitly specified in the config
@@ -177,9 +201,9 @@ def grep():
 	if not output:
 		return render_template('list.html', error='No results found for search expression')
 		
-	expression = expression.decode('utf-8')
+	#expression = expression.decode('utf-8')
 	highlight = '<span class="highlightmatch">' + expression + '</span>'
-	highlightedoutput = output.decode('utf-8').replace(expression, highlight)
+	highlightedoutput = output.replace(expression, highlight)
 	
 	return render_template('results.html', output=highlightedoutput,filepaths=filepaths,expression=expression)
 
